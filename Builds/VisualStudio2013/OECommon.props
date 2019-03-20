@@ -8,8 +8,6 @@
     <GUICommonLibsSource>$(GUIBaseDir)\Source\Plugins\CommonLibs</GUICommonLibsSource>
     <GUIBinBaseDir>$(GUIBaseDir)\Builds\VisualStudio2013</GUIBinBaseDir>
     <GUIPluginBinBaseDir>$(GUIBaseDir)\Plugins</GUIPluginBinBaseDir>
-    <PluginDir>$(GUIDir)\plugins</PluginDir>
-    <SharedDir>$(GUIDir)\shared</SharedDir>
   </PropertyGroup>
   <PropertyGroup>
     <_PropertySheetDisplayName>OEcommon</_PropertySheetDisplayName>
@@ -24,6 +22,10 @@
       <AdditionalDependencies>open-ephys.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(GUIDir);$(PluginBinDir)</AdditionalLibraryDirectories>
     </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="GUIBaseDir">
@@ -43,12 +45,6 @@
     </BuildMacro>
     <BuildMacro Include="GUIPluginBinBaseDir">
       <Value>$(GUIPluginBinBaseDir)</Value>
-    </BuildMacro>
-    <BuildMacro Include="PluginDir">
-      <Value>$(PluginDir)</Value>
-    </BuildMacro>
-    <BuildMacro Include="SharedDir">
-      <Value>$(SharedDir)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>

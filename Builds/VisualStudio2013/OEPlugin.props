@@ -13,6 +13,7 @@
     <PreLinkEvent>
       <Command>if not exist "$(PluginDir)" mkdir "$(PluginDir)"</Command>
     </PreLinkEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
