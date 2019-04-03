@@ -49,22 +49,17 @@ OBJ := $(addprefix $(OBJDIR)/,$(notdir $(SRC:.cpp=.o)))
 
 BLDCMD := $(CXX) -shared -o $(OUTDIR)/$(TARGET) $(OBJ) $(LDFLAGS) $(TARGET_ARCH)
 
+VPATH :=  $(shell find $(SRCDIR) -type d -print)
+
 .PHONY: clean objdir
-
-all: $(OBJ)
-
-debug:
-	@echo $(OBJ)
-	@echo $(SRC)
-	@echo "aaa"
-	@echo $(OBJDIR)
 
 $(OUTDIR)/$(TARGET): objdir $(OBJ)
 	@echo "Building $(TARGET)"
 	@$(BLDCMD)
 	
-$(OBJDIR)/%.o : 
+$(OBJDIR)/%.o : %.cpp
 	@echo "Compiling $<"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 
 objdir:
