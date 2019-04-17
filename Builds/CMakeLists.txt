@@ -25,7 +25,7 @@ file(GLOB_RECURSE SRC_FILES LIST_DIRECTORIES false "${SOURCE_PATH}/*.cpp" "${SOU
 
 add_library(${PLUGIN_NAME} SHARED ${SRC_FILES})
 
-target_compile_features(${PLUGIN_NAME} PUBLIC cxx_auto_type cxx_generalized_initializers cxx_nonstatic_member_init)
+target_compile_features(${PLUGIN_NAME} PUBLIC cxx_auto_type cxx_generalized_initializers)
 
 #Libraries and compiler options
 if(MSVC)
