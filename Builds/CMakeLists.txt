@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(oe_plugin)
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
 #change this line to modify the plugin name
 set(PLUGIN_NAME OEPlugin)
@@ -18,26 +19,15 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 	$<$<CONFIG:Release>:NDEBUG=1>
 	)
 	
-#[[set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS OEPLUGIN)
-set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG 
-	platano)
-set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_OPTIMIZED naranja)]]
 
-if(MSVC)
-	set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
-		"JUCE_API=__declspec(dllimport)"
-		_CRT_SECURE_NO_WARNINGS
-	)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-	set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS JUCE_DISABLE_NATIVE_FILECHOOSERS=1)
-endif()
-
-	
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Source)
 file(GLOB_RECURSE SRC_FILES LIST_DIRECTORIES false "${SOURCE_PATH}/*.cpp" "${SOURCE_PATH}/*.h")
 
 add_library(${PLUGIN_NAME} SHARED ${SRC_FILES})
 
+target_compile_features(${PLUGIN_NAME} PUBLIC cxx_auto_type cxx_generalized_initializers cxx_nonstatic_member_init)
+
+#Libraries and compiler options
 if(MSVC)
 	set(GUI_BIN_DIR ${GUI_BASE_DIR}/Builds/VisualStudio2013)
 	if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -48,6 +38,13 @@ if(MSVC)
 	target_link_directories(${PLUGIN_NAME} PUBLIC $<$<CONFIG:Release>:${GUI_BIN_DIR}/Release/bin>)
 	target_link_libraries(${PLUGIN_NAME} open-ephys.lib)
 	target_compile_options(${PLUGIN_NAME} PRIVATE /sdl-)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+	set(GUI_BIN_DIR ${GUI_BASE_DIR}/Builds/Linux/bin)
+
+	target_link_libraries(${PLUGIN_NAME} GL X11 Xext Xinerama asound dl freetype pthread rt)
+	set_property(TARGET ${PLUGIN_NAME} APPEND_STRING PROPERTY LINK_FLAGS
+		"-fvisibility=hidden -fPIC -rdynamic -Wl,-rpath,'$$ORIGIN/../shared'")
+	target_compile_options(${PLUGIN_NAME} PRIVATE -fPIC -rdynamic)
 endif()
 
 #create filters for vs and xcode
