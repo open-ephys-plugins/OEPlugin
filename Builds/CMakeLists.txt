@@ -1,10 +1,13 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.5.0)
 project(oe_plugin)
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+	set(LINUX 1)
+endif()
 
 #change this line to modify the plugin name
 set(PLUGIN_NAME OEPlugin)
-
+#change this if the base GUI code is located somewhere else
 set(GUI_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../plugin-GUI)
 
 include_directories(${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Source/Plugins/Headers)
@@ -38,13 +41,14 @@ if(MSVC)
 	target_link_directories(${PLUGIN_NAME} PUBLIC $<$<CONFIG:Release>:${GUI_BIN_DIR}/Release/bin>)
 	target_link_libraries(${PLUGIN_NAME} open-ephys.lib)
 	target_compile_options(${PLUGIN_NAME} PRIVATE /sdl-)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(LINUX)
 	set(GUI_BIN_DIR ${GUI_BASE_DIR}/Builds/Linux/bin)
 
 	target_link_libraries(${PLUGIN_NAME} GL X11 Xext Xinerama asound dl freetype pthread rt)
 	set_property(TARGET ${PLUGIN_NAME} APPEND_STRING PROPERTY LINK_FLAGS
 		"-fvisibility=hidden -fPIC -rdynamic -Wl,-rpath,'$$ORIGIN/../shared'")
 	target_compile_options(${PLUGIN_NAME} PRIVATE -fPIC -rdynamic)
+	target_compile_options(${PLUGIN_NAME} PRIVATE -O3) #enable optimization for linux debug
 endif()
 
 #create filters for vs and xcode
