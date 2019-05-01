@@ -4,7 +4,7 @@
 
 #include <ProcessorHeaders.h>
 
-//namespace must be an unique name fot your plugin
+//namespace must be an unique name for your plugin
 namespace ProcessorPluginSpace
 {
 	class ProcessorPlugin : public GenericProcessor

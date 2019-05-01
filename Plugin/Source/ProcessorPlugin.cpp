@@ -2,7 +2,7 @@
 
 using namespace ProcessorPluginSpace;
 
-//Change al names for the relevant ones, including "Processor Name"
+//Change all names for the relevant ones, including "Processor Name"
 ProcessorPlugin::ProcessorPlugin() : GenericProcessor("Processor Name")
 {
 
@@ -16,7 +16,7 @@ ProcessorPlugin::~ProcessorPlugin()
 void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 {
 	/** 
-	If the processor needs to handle events, this method must be called onyle once per process call
+	If the processor needs to handle events, this method must be called onyl once per process call
 	If spike processing is also needing, set the argument to true
 	*/
 	//checkForEvents(false);
