@@ -8,7 +8,7 @@ endif()
 #change this line to modify the plugin name
 set(PLUGIN_NAME OEPlugin)
 #change this if the base GUI code is located somewhere else
-set(GUI_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../plugin-GUI)
+set(GUI_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../plugin-GUI)
 
 include_directories(${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Source/Plugins/Headers)
 
