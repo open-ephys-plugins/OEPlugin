@@ -1,16 +1,15 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(oe_plugin)
+#change this if the base GUI code is located somewhere else
+set(GUI_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../plugin-GUI)
+
+get_filename_component(PROJECT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/.. ABSOLUTE)
+get_filename_component(PLUGIN_NAME ${PROJECT_FOLDER} NAME)
+
+project(OE_PLUGIN_${PLUGIN_NAME})
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	set(LINUX 1)
 endif()
-
-#change this line to modify the plugin name
-set(PLUGIN_NAME OEPlugin)
-#change this if the base GUI code is located somewhere else
-set(GUI_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../plugin-GUI)
-
-include_directories(${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Source/Plugins/Headers)
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 	OEPLUGIN
@@ -33,12 +32,16 @@ else()
 endif()
 
 target_compile_features(${PLUGIN_NAME} PUBLIC cxx_auto_type cxx_generalized_initializers)
+target_include_directories(${PLUGIN_NAME} PUBLIC ${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Source/Plugins/Headers)
 
 #Libraries and compiler options
 if(MSVC)
 	set(GUI_BIN_DIR ${GUI_BASE_DIR}/Builds/VisualStudio2013)
 	if (CMAKE_SIZEOF_VOID_P EQUAL 8)
 		set(GUI_BIN_DIR ${GUI_BIN_DIR}/x64)
+		set(CMAKE_LIBRARY_ARCHITECTURE "x64")
+	else()
+		set(CMAKE_LIBRARY_ARCHITECTURE "x86")
 	endif()
 
 	target_link_directories(${PLUGIN_NAME} PUBLIC $<$<CONFIG:Debug>:${GUI_BIN_DIR}/Debug/bin>)
@@ -48,6 +51,7 @@ if(MSVC)
 	
 	install(TARGETS ${PLUGIN_NAME} RUNTIME DESTINATION ${GUI_BIN_DIR}/Debug/bin/plugins CONFIGURATIONS Debug)
 	install(TARGETS ${PLUGIN_NAME} RUNTIME DESTINATION ${GUI_BIN_DIR}/Release/bin/plugins CONFIGURATIONS Release)
+	set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../libs)
 elseif(LINUX)
 	set(GUI_BIN_DIR ${GUI_BASE_DIR}/Builds/Linux/build)
 
@@ -75,3 +79,10 @@ foreach( src_file IN ITEMS ${SRC_FILES})
 	string(REPLACE "/" "\\" group_name "${src_path_rel}")
 	source_group("${group_name}" FILES "${src_file}")
 endforeach()
+
+#additional libraries, if needed
+#find_library(EXTERNAL_LIB NAMES libname)
+#target_link_libraries(${PLUGIN_NAME} ${EXTERNAL_LIB_LIB})
+
+#find_path(EXTERNAL_INCLUDE includefile.h)
+#target_include_directories(${PLUGIN_NAME} PRIVATE ${EXTERNAL_INCLUDE})
