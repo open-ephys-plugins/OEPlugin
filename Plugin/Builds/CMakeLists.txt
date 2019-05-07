@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5.0)
-#change this if the base GUI code is located somewhere else
-set(GUI_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../plugin-GUI)
+if (NOT DEFINED GUI_BASE_DIR)
+	if (DEFINED ENV{GUI_BASE_DIR})
+		set(GUI_BASE_DIR $ENV{GUI_BASE_DIR})
+	else()
+		set(GUI_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../plugin-GUI)
+	endif()
+endif()
 
 get_filename_component(PROJECT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/.. ABSOLUTE)
 get_filename_component(PLUGIN_NAME ${PROJECT_FOLDER} NAME)
