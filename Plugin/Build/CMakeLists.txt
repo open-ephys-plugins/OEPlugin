@@ -49,13 +49,13 @@ if(MSVC)
 		set(CMAKE_LIBRARY_ARCHITECTURE "x86")
 	endif()
 
-	target_link_directories(${PLUGIN_NAME} PUBLIC $<$<CONFIG:Debug>:${GUI_BIN_DIR}/Debug/bin>)
-	target_link_directories(${PLUGIN_NAME} PUBLIC $<$<CONFIG:Release>:${GUI_BIN_DIR}/Release/bin>)
-	target_link_libraries(${PLUGIN_NAME} open-ephys.lib)
+	set(GUI_BIN_DIR ${GUI_BIN_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/bin)
+
+	target_link_libraries(${PLUGIN_NAME} ${GUI_BIN_DIR}/open-ephys.lib)
 	target_compile_options(${PLUGIN_NAME} PRIVATE /sdl-)
 	
-	install(TARGETS ${PLUGIN_NAME} RUNTIME DESTINATION ${GUI_BIN_DIR}/Debug/bin/plugins CONFIGURATIONS Debug)
-	install(TARGETS ${PLUGIN_NAME} RUNTIME DESTINATION ${GUI_BIN_DIR}/Release/bin/plugins CONFIGURATIONS Release)
+	install(TARGETS ${PLUGIN_NAME} RUNTIME DESTINATION ${GUI_BIN_DIR}/plugins)
+
 	set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../libs)
 elseif(LINUX)
 	set(GUI_BIN_DIR ${GUI_BASE_DIR}/Builds/Linux/build)
