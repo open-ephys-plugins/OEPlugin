@@ -29,6 +29,8 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Source)
 file(GLOB_RECURSE SRC_FILES LIST_DIRECTORIES false "${SOURCE_PATH}/*.cpp" "${SOURCE_PATH}/*.h")
+set(GUI_COMMONLIB_DIR ${GUI_BASE_DIR}/installed_libs)
+list(APPEND CMAKE_PREFIX_PATH ${GUI_COMMONLIB_DIR})
 
 if (APPLE)
 	add_library(${PLUGIN_NAME} MODULE ${SRC_FILES})
@@ -37,21 +39,21 @@ else()
 endif()
 
 target_compile_features(${PLUGIN_NAME} PUBLIC cxx_auto_type cxx_generalized_initializers)
-target_include_directories(${PLUGIN_NAME} PUBLIC ${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Source/Plugins/Headers)
+target_include_directories(${PLUGIN_NAME} PUBLIC ${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Source/Plugins/Headers ${GUI_COMMONLIB_DIR}/include)
 
-#Libraries and compiler options
-if(MSVC)
-	set(GUI_BIN_DIR ${GUI_BASE_DIR}/Builds/VisualStudio2013)
+set(GUI_BIN_DIR ${GUI_BASE_DIR}/Build/$<IF:$<CONFIG:Debug>,Debug,Release>)
+
+if (NOT CMAKE_LIBRARY_ARCHITECTURE)
 	if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-		set(GUI_BIN_DIR ${GUI_BIN_DIR}/x64)
 		set(CMAKE_LIBRARY_ARCHITECTURE "x64")
 	else()
 		set(CMAKE_LIBRARY_ARCHITECTURE "x86")
 	endif()
+endif()
 
-	set(GUI_BIN_DIR ${GUI_BIN_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/bin)
-
-	target_link_libraries(${PLUGIN_NAME} ${GUI_BIN_DIR}/open-ephys.lib)
+#Libraries and compiler options
+if(MSVC)
+	target_link_libraries(${PLUGIN_NAME} ${GUI_BIN_DIR}/open-ephys.lib CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES})
 	target_compile_options(${PLUGIN_NAME} PRIVATE /sdl-)
 	
 	install(TARGETS ${PLUGIN_NAME} RUNTIME DESTINATION ${GUI_BIN_DIR}/plugins)
