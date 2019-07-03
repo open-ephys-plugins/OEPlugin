@@ -14,6 +14,9 @@ project(OE_PLUGIN_${PLUGIN_NAME})
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	set(LINUX 1)
+	if(NOT CMAKE_BUILD_TYPE)
+		set(CMAKE_BUILD_TYPE Debug)
+	endif()
 endif()
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
@@ -30,7 +33,10 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 file(GLOB_RECURSE SRC_FILES LIST_DIRECTORIES false "${SOURCE_PATH}/*.cpp" "${SOURCE_PATH}/*.h")
 set(GUI_COMMONLIB_DIR ${GUI_BASE_DIR}/installed_libs)
-list(APPEND CMAKE_PREFIX_PATH ${GUI_COMMONLIB_DIR})
+
+set(CONFIGURATION_FOLDER $<$<CONFIG:Debug>:Debug>$<$<NOT:$<CONFIG:Debug>>:Release>)
+
+list(APPEND CMAKE_PREFIX_PATH ${GUI_COMMONLIB_DIR} ${GUI_COMMONLIB_DIR}/${CONFIGURATION_FOLDER})
 
 if (APPLE)
 	add_library(${PLUGIN_NAME} MODULE ${SRC_FILES})
@@ -41,7 +47,7 @@ endif()
 target_compile_features(${PLUGIN_NAME} PUBLIC cxx_auto_type cxx_generalized_initializers)
 target_include_directories(${PLUGIN_NAME} PUBLIC ${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Plugins/Headers ${GUI_COMMONLIB_DIR}/include)
 
-set(GUI_BIN_DIR ${GUI_BASE_DIR}/Build/$<IF:$<CONFIG:Debug>,Debug,Release>)
+set(GUI_BIN_DIR ${GUI_BASE_DIR}/Build/${CONFIGURATION_FOLDER})
 
 if (NOT CMAKE_LIBRARY_ARCHITECTURE)
 	if (CMAKE_SIZEOF_VOID_P EQUAL 8)
