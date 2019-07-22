@@ -26,7 +26,7 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 	$<$<PLATFORM_ID:Linux>:JUCE_DISABLE_NATIVE_FILECHOOSERS=1>
 	$<$<CONFIG:Debug>:DEBUG=1>
 	$<$<CONFIG:Debug>:_DEBUG=1>
-	$<$<CONFIG:Release>:NDEBUG=1>
+	$<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
 	)
 
 
@@ -34,9 +34,13 @@ set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 file(GLOB_RECURSE SRC_FILES LIST_DIRECTORIES false "${SOURCE_PATH}/*.cpp" "${SOURCE_PATH}/*.h")
 set(GUI_COMMONLIB_DIR ${GUI_BASE_DIR}/installed_libs)
 
-set(CONFIGURATION_FOLDER $<$<CONFIG:Debug>:Debug>$<$<NOT:$<CONFIG:Debug>>:Release>)
 
-list(APPEND CMAKE_PREFIX_PATH ${GUI_COMMONLIB_DIR} ${GUI_COMMONLIB_DIR}/${CONFIGURATION_FOLDER})
+list(APPEND CMAKE_PREFIX_PATH
+	${GUI_COMMONLIB_DIR}
+	${GUI_COMMONLIB_DIR}/$<CONFIG>
+	${GUI_COMMONLIB_DIR}/Release # default to Release if, e.g., a RelWithDebInfo build of a library is not available
+	)
+# TODO, still broken on multi-config platforms due to find_library
 
 if (APPLE)
 	add_library(${PLUGIN_NAME} MODULE ${SRC_FILES})
@@ -47,7 +51,7 @@ endif()
 target_compile_features(${PLUGIN_NAME} PUBLIC cxx_auto_type cxx_generalized_initializers)
 target_include_directories(${PLUGIN_NAME} PUBLIC ${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Plugins/Headers ${GUI_COMMONLIB_DIR}/include)
 
-set(GUI_BIN_DIR ${GUI_BASE_DIR}/Build/${CONFIGURATION_FOLDER})
+set(GUI_BIN_DIR ${GUI_BASE_DIR}/Build/$<CONFIG>)
 
 if (NOT CMAKE_LIBRARY_ARCHITECTURE)
 	if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -62,13 +66,18 @@ if(MSVC)
 	target_link_libraries(${PLUGIN_NAME} ${GUI_BIN_DIR}/open-ephys.lib)
 	target_compile_options(${PLUGIN_NAME} PRIVATE /sdl-)
 	
-	install(TARGETS ${PLUGIN_NAME} RUNTIME DESTINATION ${GUI_BIN_DIR}/plugins  CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES})
+	install(TARGETS ${PLUGIN_NAME} RUNTIME DESTINATION ${GUI_BIN_DIR}/plugins)
 
-	set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../libs)
+	# also install any dependency DLLs
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../libs/bin/${CMAKE_LIBRARY_ARCHITECTURE}/
+		DESTINATION ${GUI_BIN_DIR}/shared OPTIONAL)
+
+	list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../libs)
+
 elseif(LINUX)
 	target_link_libraries(${PLUGIN_NAME} GL X11 Xext Xinerama asound dl freetype pthread rt)
 	set_property(TARGET ${PLUGIN_NAME} APPEND_STRING PROPERTY LINK_FLAGS
-		"-fvisibility=hidden -fPIC -rdynamic -Wl,-rpath,'$$ORIGIN/../shared'")
+		"-fvisibility=hidden -fPIC -rdynamic -Wl,-rpath,'$ORIGIN/../shared'")
 	target_compile_options(${PLUGIN_NAME} PRIVATE -fPIC -rdynamic)
 	target_compile_options(${PLUGIN_NAME} PRIVATE -O3) #enable optimization for linux debug
 	
@@ -79,7 +88,7 @@ elseif(APPLE)
 	"-undefined dynamic_lookup -rpath @loader_path/../../../../shared")
 
 	install(TARGETS ${PLUGIN_NAME} DESTINATION $ENV{HOME}/Library/Application\ Support/open-ephys/PlugIns)
-	set(CMAKE_PREFIX_PATH /opt/local)
+	list(APPEND CMAKE_PREFIX_PATH /opt/local)
 endif()
 
 #create filters for vs and xcode
