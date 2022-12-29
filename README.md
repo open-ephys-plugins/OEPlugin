@@ -1,12 +1,22 @@
-# Open Ephys plugin template
+# Open Ephys plugin template (`v0.5.x`)
 
-This repository contains a template for building plugins for the [Open Ephys GUI](https://github.com/open-ephys/plugin-GUI). Information on the plugin architecture can be found on [our wiki](https://open-ephys.atlassian.net/wiki/spaces/OEW/pages/950363/Plugin+architecture).
+This repository contains a generic template for building plugins for version `0.5.x` of the [Open Ephys GUI](https://github.com/open-ephys/plugin-GUI).
 
-## Creating a new plugin
+To build plugins for the latest version of the GUI `v0.6.x`, you should use one of the following templates instead:
 
-1. Add source files to the Source folder. The existing files can be used as a template
-2. [Edit the OpenEphysLib.cpp file accordingly](https://open-ephys.atlassian.net/wiki/spaces/OEW/pages/46596128/OpenEphysLib+file)
-3. [Create the build files through CMake](https://open-ephys.atlassian.net/wiki/spaces/OEW/pages/1259110401/Plugin+CMake+Builds)
+- [processor-plugin-template](https://github.com/open-ephys-plugins/processor-plugin-template) (most common)
+- [visualizer-plugin-template](https://github.com/open-ephys-plugins/visualizer-plugin-template)
+- [data-thread-template](https://github.com/open-ephys-plugins/data-thread-template)
+- [file-source-template](https://github.com/open-ephys-plugins/file-source-template)
+- [record-engine-template](https://github.com/open-ephys-plugins/record-engine-template)
+
+More information about building your own plugins can be found in the [Open Ephys GUI Developer Guide](https://open-ephys.github.io/gui-docs/Developer-Guide/index.html).
+
+## Using this template
+
+1. Add source code files to the `Source` directory. The existing files can be used as a starting point.
+2. Edit the `OpenEphysLib.cpp` file to include the correct plugin metadata.
+3. Create the build files [using CMake](https://open-ephys.github.io/gui-docs/Developer-Guide/Compiling-plugins.html)
 
 ## Using external libraries
 
