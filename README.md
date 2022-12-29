@@ -1,14 +1,14 @@
-# Open Ephys plugin template (`v0.5.x`)
+# Open Ephys GUI Plugin Template (deprecated)
 
-This repository contains a generic template for building plugins for version `0.5.x` of the [Open Ephys GUI](https://github.com/open-ephys/plugin-GUI).
+This repository contains a generic plugin template for building plugins for an older version of the [Open Ephys GUI](https://github.com/open-ephys/plugin-GUI) (`0.5.x`).
 
-To build plugins for the latest version of the GUI `v0.6.x`, you should use one of the following templates instead:
+To build plugins for the latest version of the GUI (`0.6.x`), you should use one of the following templates instead:
 
-- [processor-plugin-template](https://github.com/open-ephys-plugins/processor-plugin-template) (most common)
-- [visualizer-plugin-template](https://github.com/open-ephys-plugins/visualizer-plugin-template)
-- [data-thread-template](https://github.com/open-ephys-plugins/data-thread-template)
-- [file-source-template](https://github.com/open-ephys-plugins/file-source-template)
-- [record-engine-template](https://github.com/open-ephys-plugins/record-engine-template)
+- [`processor-plugin-template`](https://github.com/open-ephys-plugins/processor-plugin-template) (most common)
+- [`visualizer-plugin-template`](https://github.com/open-ephys-plugins/visualizer-plugin-template)
+- [`data-thread-template`](https://github.com/open-ephys-plugins/data-thread-template)
+- [`file-source-template`](https://github.com/open-ephys-plugins/file-source-template)
+- [`record-engine-template`](https://github.com/open-ephys-plugins/record-engine-template)
 
 More information about building your own plugins can be found in the [Open Ephys GUI Developer Guide](https://open-ephys.github.io/gui-docs/Developer-Guide/index.html).
 
